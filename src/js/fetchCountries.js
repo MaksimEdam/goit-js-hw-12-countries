@@ -1,3 +1,4 @@
+export default fetchCountries;
 function fetchCountries(searchQuery) {
   const url = `https://restcountries.com/v2/name/${searchQuery}`;
 
@@ -7,5 +8,3 @@ function fetchCountries(searchQuery) {
     }
   });
 }
-
-export default fetchCountries;

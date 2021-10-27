@@ -10,31 +10,31 @@ refs.input.addEventListener(
   debounce(handleGenerateListFromResponse, 1000),
 );
 
-// Забираем значение с инпута 
+// Забираем значение с инпута
 function handleGenerateListFromResponse(event) {
   let inputValue = event.target.value.trim();
 
-  if (!inputValue) {      
+  if (!inputValue) {
     error404();
     return;
   }
 
-    getCountriesList(inputValue)
+  getCountriesList(inputValue);
 }
 
 // Создаем разметку страны по шаблону hbs
 function addFullCoutryInfo(country) {
   const markup = countriesMarkupTMPT(country);
 
-   //   Добавляем новую разметку страны
+  //   Добавляем новую разметку страны
   refs.countryContainer.insertAdjacentHTML('beforeend', markup);
 }
 
-function clearContent(){
-  refs.input.value = '';
+function clearContent() {
+  //refs.input.value = '';
   refs.inputMessage.innerHTML = '';
   refs.inputList.innerHTML = '';
-  refs.countryContainer.innerHTML = '';  
+  refs.countryContainer.innerHTML = '';
 }
 
 // Выводим значение в зависимости от полученого к-ва стран
@@ -46,31 +46,36 @@ function selectTypeOutputInfo(numberOfCountries) {
     addFullCoutryInfo(numberOfCountries);
   }
 
-  if(numberOfCountries.length >= 2 && numberOfCountries.length <= 10) {
-        clearContent();                    
-        numberOfCountries.forEach(country => {
-            refs.inputList.insertAdjacentHTML('beforeend',`<li>${country.name}</li>`)
-        });             
+  if (numberOfCountries.length >= 2 && numberOfCountries.length <= 10) {
+    clearContent();
+    numberOfCountries.forEach(country => {
+      refs.inputList.insertAdjacentHTML(
+        'beforeend',
+        `<li>${country.name}</li>`,
+      );
+    });
 
-        refs.inputList.addEventListener('click', e => {
-            clearContent();
-            const getInputValue = refs.input.value = e.target.textContent;            
-            const country = numberOfCountries.find(country => {              
-              return country.name === getInputValue
-            })            
-            addFullCoutryInfo({country});
-        })                 
-    }
- 
+    refs.inputList.addEventListener('click', e => {
+      clearContent();
+      const getInputValue = (refs.input.value = e.target.textContent);
+      const country = numberOfCountries.find(country => {
+        return country.name === getInputValue;
+      });
+      addFullCoutryInfo({ country });
+    });
+  }
+
   if (numberOfCountries.length > 10) {
     clearContent();
-    const message = 'Найдено слишком много совпадений, уточните ваш запрос'
+    const message = 'Найдено слишком много совпадений, уточните ваш запрос';
     refs.inputMessage.insertAdjacentHTML('beforeend', message);
     error({
       title: 'Ошибка',
       text: message,
-      delay: 2000,  
-  }); 
+      delay: 2000,
+    });
+  } else if (numberOfCountries.status === 404) {
+    return error404();
   }
 }
 
@@ -80,8 +85,8 @@ function getCountriesList(value) {
     .catch(error => error404(error));
 }
 
-function error404(err){
+function error404(err) {
   clearContent();
-  const message = 'Не корректный запрос. Повторите попытку еще раз'
-  refs.inputMessage.insertAdjacentHTML('beforeend', message);  
+  const message = 'Не корректный запрос. Повторите попытку еще раз';
+  refs.inputMessage.insertAdjacentHTML('beforeend', message);
 }
